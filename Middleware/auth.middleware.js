@@ -1,5 +1,6 @@
 const { APIError } = require("../utils/err");
 const { verify, JsonWebTokenError } = require("jsonwebtoken");
+
 exports.userRequired = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
@@ -36,7 +37,7 @@ exports.sellerRequired = async (req, res, next) => {
   try {
     const isSeller = req.userRole === "seller";
     if (!isSeller) {
-      return next(APIError.unauthorized());
+      return next(APIError.unauthorized(`Unauthorized! Only sellers are allowed to access this endpoint, you're a ${req.userRole}`));
     }
     next();
   } catch (error) {

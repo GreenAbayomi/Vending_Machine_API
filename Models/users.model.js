@@ -23,7 +23,7 @@ const UserSchema = new Schema({
         // default: "seller",
         enum: {
           values:  ["seller", "buyer"],
-          message: '{VALUE} is not allowed!'
+          message: '{VALUE} is not allowed! Kindly register as a buyer or seller'
         }
     },
     refreshToken:{

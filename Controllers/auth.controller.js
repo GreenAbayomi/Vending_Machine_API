@@ -14,13 +14,7 @@ exports.register = async (req, res, next) => {
         )
       )
     }
-      if(role !== "seller" || "buyer"){
-        return next(
-          APIError.badRequest(
-            `A ${role} role is not allowed! Kindly register as a \'buyer\' or a \'seller\' `
-            
-        ))
-      }
+   
    
     const oldAccount = await UserModel.findOne({ username });
     if (oldAccount) {

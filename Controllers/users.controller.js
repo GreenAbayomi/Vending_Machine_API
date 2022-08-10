@@ -51,4 +51,18 @@ exports.update = async (req, res, next) => {
         next(err)
     }
 };
+
+
+exports.resetDeposit = async(req, res, next)=>{
+  try {
+    
+   const resetDeposit = await UserModel.findById(req.userId)
+   resetDeposit.deposit = 0
+   await resetDeposit.save()
+
+    res.json(buildResponse(`Your deposit has been successfully reset`))
+  } catch (err) {
+    next(err)
+  }
+}
 exports.delete_ = async (req, res, next) => {};

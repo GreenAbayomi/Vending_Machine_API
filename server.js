@@ -6,6 +6,7 @@ const { notFound, errorHandler } = require('./Middleware/error.middleware')
 const authRouter = require('./Routes/auth.route')
 const userRouter = require('./Routes/users.route')
 const { userRequired } = require('./Middleware/auth.middleware')
+const { productRouter } = require('./Routes/products.route')
 
 
 app.use(express.json())
@@ -18,6 +19,7 @@ app.get('/api/v1', (req,res)=>{
 
 app.use('/auth', authRouter)
 app.use('/users', userRequired, userRouter)
+app.use('/products', productRouter)
 
 
 
