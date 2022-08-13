@@ -57,6 +57,7 @@ try {
             APIError.notFound(`No matching product found`)
         )
     }
+    
     if(req.userId !== productToUpdate.seller.toString()){
         return next(
             APIError.unauthorized(`The product is not yours! Hence, you can not update it.`)
@@ -103,7 +104,7 @@ const buyProduct = async(req,res,next)=>{
                 APIError.badRequest(`Kindly Supply both the productId and the amount you intend to buy`)
             )
         }
-        
+
 
     } catch (err) {
         next(err)

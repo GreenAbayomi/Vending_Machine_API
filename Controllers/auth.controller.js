@@ -15,7 +15,6 @@ exports.register = async (req, res, next) => {
       )
     }
    
-   
     const oldAccount = await UserModel.findOne({ username });
     if (oldAccount) {
       return next(
@@ -29,7 +28,7 @@ exports.register = async (req, res, next) => {
     const newUser = await UserModel.create({
       username,
       role,
-      password: hashPassword,
+      password: hashPassword
     });
     const data = buildUser(newUser.toObject());
     res

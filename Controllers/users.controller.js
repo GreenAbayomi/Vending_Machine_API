@@ -32,7 +32,7 @@ exports.details = async (req, res, next) => {
   try {
     const userData = await UserModel.findById(req.userId);
     const data = buildUser(userData.toObject());
-    res.json(buildResponse("Account Fetched Successfully", data));
+    res.json(buildResponse(`Welcome ${userData.username}`, data));
   } catch (error) {
     next(error);
   }
