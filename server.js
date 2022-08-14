@@ -3,22 +3,19 @@ const express = require('express')
 const app = express()
 const { launchDB } = require('./Config/db')
 const { notFound, errorHandler } = require('./Middleware/error.middleware')
-const rootRouter = require('./Routes/index.route')
+const routes = require('./Routes/index.route')
+
 
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-app.use('/', rootRouter)
+app.use('/', routes)
 
 
 app.get('/api/v1', (req,res)=>{
     res.status(200).json({msg: `Welcome! You can use the Vending Machine API now`})
 })
-
-
-
-
 
 
 app.all('*', notFound)

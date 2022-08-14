@@ -21,10 +21,11 @@ const UserSchema = new Schema({
         type: String,
         required: [true, 'The role field can not be empty'],
         // default: "seller",
-        enum: {
-          values:  ["seller", "buyer"],
-          message: '{VALUE} is not allowed! Kindly register as a buyer or seller'
-        }
+        // enum: {
+        //   values:  ["seller", "buyer"],
+        //   message: '{VALUE} is not allowed! Kindly register as a buyer or seller'
+        // }
+        enum: ["seller", "buyer"]
     },
     refreshToken:{
         type: String
@@ -38,7 +39,11 @@ const UserSchema = new Schema({
 
 const UserModel = new model("user", UserSchema)
 
+const allRoles = UserModel.schema.path('role').enumValues
 
 
 
-module.exports = {UserModel}
+
+module.exports = {
+    UserModel
+}

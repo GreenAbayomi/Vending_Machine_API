@@ -1,25 +1,19 @@
 const express = require('express')
 const router = express.Router()
 const {deposit, delete_, update, details, resetDeposit} = require('../Controllers/users.controller')
-const { buyerRequired } = require('../Middleware/auth.middleware')
+const { verifyRoles } = require('../Middleware/auth.middleware')
 
 
 
-router.get('/', details)
-
-router.post('/', update)
-
-router.delete('/', delete_)
-
-router.put('/deposit',buyerRequired, deposit)
-
-router.post('/deposit', buyerRequired, deposit)
-
-router.patch('/reset',buyerRequired, resetDeposit)
+router.route('/')
+.get(details)
+.put(update)
+.delete(delete_)
 
 
-
-
+router.route('/deposit')
+.put(verifyRoles("buyer"), deposit)
+.patch(verifyRoles("buyer"), resetDeposit)
 
 
 module.exports = router

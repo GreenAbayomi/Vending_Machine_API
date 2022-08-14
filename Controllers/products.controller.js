@@ -4,6 +4,7 @@ const { APIError } = require("../utils/err")
 
 const getProducts = async(req,res,next)=>{
     try {
+        console.log(req.url);
         const products = await productModel
         .find({})
         .populate({
