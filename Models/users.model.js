@@ -20,12 +20,12 @@ const UserSchema = new Schema({
     role:{
         type: String,
         required: [true, 'The role field can not be empty'],
-        // default: "seller",
-        // enum: {
-        //   values:  ["seller", "buyer"],
-        //   message: '{VALUE} is not allowed! Kindly register as a buyer or seller'
-        // }
-        enum: ["seller", "buyer"]
+        default: "seller",
+        enum: {
+          values:  ["seller", "buyer"],
+          message: '{VALUE} is not allowed! Kindly register as a buyer or seller'
+        }
+        //enum: ["seller", "buyer"]
     },
     refreshToken:{
         type: String
