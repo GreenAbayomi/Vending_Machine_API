@@ -4,11 +4,17 @@ const app = express()
 const { launchDB } = require('./Config/db')
 const { notFound, errorHandler } = require('./Middleware/error.middleware')
 const routes = require('./Routes/index.route')
+const morgan = require('morgan')
+const cors = require('cors')
+const cookieParser = require('cookie-parser')
 
+app.use(morgan("dev"));
+app.use(cors());
 
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+app.use(cookieParser())
 
 app.use('/', routes)
 

@@ -1,5 +1,6 @@
 const { hashSync, compareSync } = require("bcryptjs");
-const { sign } = require("jsonwebtoken");
+//const { sign } = require("jsonwebtoken");
+const jwt = require('jsonwebtoken')
 const {UserModel} = require("../Models/users.model");
 const {buildResponse, buildUser}= require('../utils/index')
 const {APIError} = require('../utils/err')
@@ -59,14 +60,19 @@ exports.login = async (req, res, next) => {
         APIError.customError("Sorry, Invalid password for this user", 400)
       );
     }
-    const secret = process.env.JWT_SECRET_TOKEN;
-    const payload = { id: user._id, role: user.role };
-    const token = sign(payload, secret, { expiresIn: "1hr" });
-    const refreshToken = sign(payload, secret, { expiresIn: "7d" });
+    //creating JWTs - AccessToken and RefreshToken
+    const accessSecret = process.env.JWT_SECRET_TOKEN
+    const refreshSecret = process.env.REFRESH_TOKEN
+    const payload = { id: user._id, role: user.role }
+
+    const token = jwt.sign(payload, accessSecret, { expiresIn: "20s" });
+    const refreshToken = jwt.sign(payload, refreshSecret, { expiresIn: "1d" });
+
     user.refreshToken = refreshToken;
     await user.save();
-
+    
     const data = buildUser(user.toObject());
+    res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24*60*60*1000})
     res
       .status(200)
       .json(
@@ -76,18 +82,56 @@ exports.login = async (req, res, next) => {
     next(err);
   }
 };
-
-exports.logout = async (req, res, next) => {
-  try {
-  } catch (err) {
-    next(err);
-  }
-};
-
 exports.refreshToken = async (req, res, next) => {
   try {
+    const cookies = req.cookies
+    if(!cookies?.jwt) {
+      return next (APIError.unauthenticated(`You need to login`))
+    }
+   
+    const refreshToken = cookies.jwt
+    const user = await UserModel.findOne({ refreshToken });
+
+    if(!user) {
+      return next (APIError.customError(`Forbidden`, 403))
+    }
+  const verifyRefreshToken = await jwt.verify (refreshToken,  process.env.REFRESH_TOKEN)
+  if(!verifyRefreshToken) return next (APIError.customError(`Forbidden`, 403))
+  const payload = { id: user._id, role: user.role }
+  const accessSecret = process.env.JWT_SECRET_TOKEN
+  const token = jwt.sign (payload, accessSecret, { expiresIn: "20s" })
+  res.json({token})
+
+  } 
+  
+  catch (err) {
+    next(err);
+  }
+};
+
+exports.logout = async (req, res, next) => {
+  // On client, also delete the token
+  try {
+    const cookies = req.cookies
+    if(!cookies?.jwt) {
+      return next (APIError.customError(`No content, success`, 204))
+    }
+    const refreshToken = cookies.jwt
+    const user = await UserModel.findOne({ refreshToken });
+
+    if(!user) {
+      res.clearCookie('jwt', {httpOnly: true, maxAge: 24*60*60*1000})
+      return res.sendStatus(204)
+    }
+    //Delete refreshToken
+    user.refreshToken = ''
+    await user.save();
+    res.clearCookie('jwt', {httpOnly: true, maxAge: 24*60*60*1000})
+    res.status(200).json(`You have successfully logged out `)
+  
   } catch (err) {
     next(err);
   }
 };
+
 

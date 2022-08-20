@@ -4,7 +4,7 @@ const { userRequired, verifyRoles } = require('../Middleware/auth.middleware')
 const router = express.Router()
 
 
-router.get('/', getProducts)
+router.get('/', userRequired, getProducts)
 router.post('/', userRequired,verifyRoles("seller"), createProduct)
 router.put('/:productId', userRequired,verifyRoles("seller"), updateProduct)
 router.delete('/:productId', userRequired, verifyRoles("seller"), deleteProduct)

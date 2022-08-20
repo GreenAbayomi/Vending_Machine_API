@@ -1,5 +1,5 @@
 const { APIError } = require("../utils/err");
-const { verify, JsonWebTokenError } = require("jsonwebtoken");
+const { verify, JsonWebTokenError, TokenExpiredError } = require("jsonwebtoken");
 const {allRoles} = require('../Models/users.model')
 
 exports.userRequired = async (req, res, next) => {
@@ -8,22 +8,22 @@ exports.userRequired = async (req, res, next) => {
     if (!authorization) {
       return next(APIError.unauthenticated());
     }
-    const token = authorization.split(" ")[1];
+    const token = authorization.split(' ')[1];
     const payload = await verify(token, process.env.JWT_SECRET_TOKEN);
     req.userId = payload.id;
     req.userRole = payload.role;
-    //console.log(req.userRole);
     next();
   } catch (error) {
     let err = error;
-    if (error instanceof JsonWebTokenError) {
-      err = APIError.badRequest("Invalid or Expired Token Supplied");
+    if (error instanceof TokenExpiredError) {
+     err = APIError.badRequest("Expired Token Supplied")
+   }
+   else if (error instanceof JsonWebTokenError) {
+      err = APIError.badRequest("Invalid Token Supplied")
     }
     next(err);
   }
 };
-
-
 
 
 exports.verifyRoles = allowedRole => (req, res, next)=>{

@@ -12,7 +12,6 @@ const launchDB = async()=>{
     }
 }
 
-
 module.exports = {
     launchDB
 }

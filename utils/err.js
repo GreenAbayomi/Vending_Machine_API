@@ -4,7 +4,6 @@ class APIError extends Error {
         this.status = status
     }
 
-
     static notFound(msg){
         return new this(msg || `Not Found`, 404)
     }
