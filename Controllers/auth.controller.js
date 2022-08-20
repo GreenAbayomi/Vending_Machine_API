@@ -72,7 +72,8 @@ exports.login = async (req, res, next) => {
     await user.save();
     
     const data = buildUser(user.toObject());
-    res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24*60*60*1000})
+    //set cookie
+    res.cookie('jwt', refreshToken, {httpOnly: true, sameSite: 'none', secure: true, maxAge: 24*60*60*1000})
     res
       .status(200)
       .json(
@@ -120,7 +121,7 @@ exports.logout = async (req, res, next) => {
     const user = await UserModel.findOne({ refreshToken });
 
     if(!user) {
-      res.clearCookie('jwt', {httpOnly: true, maxAge: 24*60*60*1000})
+      res.clearCookie('jwt', {httpOnly: true, sameSite: 'none', secure: true})
       return res.sendStatus(204)
     }
     //Delete refreshToken
